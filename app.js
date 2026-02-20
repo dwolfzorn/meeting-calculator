@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     "Leadership": {
       "SVP": 200000,
-      "CIP": 260000
+      "CIO": 260000
     }
   };
 
@@ -98,8 +98,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const originalText = exportJpgBtn.textContent;
     exportJpgBtn.textContent = 'Exporting...';
 
+    let exportRoot = null;
     try {
-      const canvas = await html2canvas(document.body, {
+      const titleRow = document.getElementById('titleRow');
+      const attendeesExportSection = document.getElementById('attendeesExportSection');
+      const container = document.querySelector('.container');
+
+      exportRoot = document.createElement('div');
+      exportRoot.className = 'export-capture';
+      exportRoot.style.position = 'fixed';
+      exportRoot.style.left = '-99999px';
+      exportRoot.style.top = '0';
+      exportRoot.style.backgroundColor = '#ffffff';
+      exportRoot.style.padding = '2rem';
+      exportRoot.style.width = `${container.clientWidth}px`;
+
+      const titleClone = titleRow.cloneNode(true);
+      const attendeesClone = attendeesExportSection.cloneNode(true);
+      exportRoot.appendChild(titleClone);
+      exportRoot.appendChild(attendeesClone);
+      document.body.appendChild(exportRoot);
+
+      const canvas = await html2canvas(exportRoot, {
         backgroundColor: '#ffffff',
         scale: Math.min(window.devicePixelRatio || 1, 2),
         useCORS: true
@@ -114,14 +134,16 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Export failed:', error);
       alert('Export failed. Please try again.');
     } finally {
+      if (exportRoot) {
+        exportRoot.remove();
+      }
       exportJpgBtn.disabled = false;
       exportJpgBtn.textContent = originalText;
     }
   }
 
   // Move meeting length input next to header
-  const container = document.querySelector('.container');
-  const header = container.querySelector('h1');
+  const titleRow = document.getElementById('titleRow');
   const lengthContainer = document.createElement('div');
   lengthContainer.style.display = 'flex';
   lengthContainer.style.alignItems = 'center';
@@ -138,8 +160,8 @@ document.addEventListener('DOMContentLoaded', () => {
   lengthContainer.appendChild(lengthLabel);
   lengthContainer.appendChild(lengthInput);
 
-  // Insert after header
-  header.insertAdjacentElement('afterend', lengthContainer);
+  // Insert below title row
+  titleRow.insertAdjacentElement('afterend', lengthContainer);
 
   document.getElementById('length').addEventListener('input', calculate);
   exportJpgBtn.addEventListener('click', exportAsJpg);

@@ -8,7 +8,13 @@
 </head>
 <body>
   <div class="container">
-    <h1>Meeting Cost Calculator</h1>
+    <div class="title-row" id="titleRow">
+      <h1>Meeting Cost Calculator</h1>
+      <div class="summary">
+        <strong>Total Meeting Cost:</strong>
+        <span id="totalCost">$0.00</span>
+      </div>
+    </div>
 
     <div>
       <input id="length" type="number" value="60" min="1" />
@@ -21,21 +27,18 @@
       </select>
       <button class="add-btn" onclick="addFromPreset()">Add Role</button>
 
-      <h2>Attendees</h2>
-      <div class="row header">
-        <strong>Role</strong>
-        <strong># People</strong>
-        <strong>Annual Salary ($)</strong>
-        <span></span>
+      <div id="attendeesExportSection">
+        <h2>Attendees</h2>
+        <div class="row header">
+          <strong>Role</strong>
+          <strong># People</strong>
+          <strong>Annual Salary ($)</strong>
+          <span></span>
+        </div>
+
+        <div id="attendeeList"></div>
       </div>
-
-      <div id="attendeeList"></div>
       <button class="add-btn" onclick="addRow()">Add Custom Role</button>
-    </div>
-
-    <div class="summary">
-      <strong>Total Meeting Cost:</strong>
-      <span id="totalCost">$0.00</span>
     </div>
 
     <button id="exportJpgBtn" class="export-btn" type="button">Export as JPG</button>
