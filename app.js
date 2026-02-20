@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   const attendeeList = document.getElementById('attendeeList');
+  const exportJpgBtn = document.getElementById('exportJpgBtn');
   const HOURS_PER_YEAR = 2080;
 
   const ROLE_PRESETS = {
@@ -87,6 +88,37 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('totalCost').textContent = `$${total.toFixed(2)}`;
   }
 
+  async function exportAsJpg() {
+    if (typeof html2canvas !== 'function') {
+      alert('Unable to export image right now. Please refresh and try again.');
+      return;
+    }
+
+    exportJpgBtn.disabled = true;
+    const originalText = exportJpgBtn.textContent;
+    exportJpgBtn.textContent = 'Exporting...';
+
+    try {
+      const canvas = await html2canvas(document.body, {
+        backgroundColor: '#ffffff',
+        scale: Math.min(window.devicePixelRatio || 1, 2),
+        useCORS: true
+      });
+
+      const imageData = canvas.toDataURL('image/jpeg', 0.92);
+      const downloadLink = document.createElement('a');
+      downloadLink.href = imageData;
+      downloadLink.download = `meeting-calculator-${new Date().toISOString().slice(0, 10)}.jpg`;
+      downloadLink.click();
+    } catch (error) {
+      console.error('Export failed:', error);
+      alert('Export failed. Please try again.');
+    } finally {
+      exportJpgBtn.disabled = false;
+      exportJpgBtn.textContent = originalText;
+    }
+  }
+
   // Move meeting length input next to header
   const container = document.querySelector('.container');
   const header = container.querySelector('h1');
@@ -110,8 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
   header.insertAdjacentElement('afterend', lengthContainer);
 
   document.getElementById('length').addEventListener('input', calculate);
+  exportJpgBtn.addEventListener('click', exportAsJpg);
 
-  addRow();
   window.addFromPreset = addFromPreset;
   window.addRow = addRow;
 });
