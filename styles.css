@@ -5,40 +5,113 @@ body {
   padding: 2rem;
 }
 
-.container {
+.app-shell {
   max-width: 900px;
   margin: auto;
-  background: white;
+  background: #ffffff;
   padding: 2rem;
   border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.title-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
+.app-title-row {
+  margin-bottom: 1rem;
 }
 
-.title-row h1 {
+.app-title-row h1 {
   margin: 0;
 }
 
-.row {
+.meeting-metrics {
   display: grid;
-  /* 4 columns: Role, # People, Salary, Remove Button */
-  grid-template-columns: 1.75fr 0.5fr 1fr 0.5fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.meeting-metric-card {
+  background: #eef3f8;
+  border: 1px solid #d9e1ea;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.meeting-metric-card label,
+.meeting-metric-card strong {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #4e5d6c;
+  margin-bottom: 0.4rem;
+}
+
+#customDurationMinutes {
+  width: 8ch;
+  min-width: 8ch;
+}
+
+.meeting-duration-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.meeting-duration-button {
+  background: #ffffff;
+  border: 1px solid #b9c7d6;
+  border-radius: 999px;
+  color: #31485f;
+  font-weight: 600;
+  padding: 0.35rem 0.7rem;
+}
+
+.meeting-duration-button.is-active {
+  background: #1f4f85;
+  border-color: #1f4f85;
+  color: #ffffff;
+}
+
+.meeting-custom-duration {
+  margin-top: 0.6rem;
+}
+
+.meeting-custom-duration.is-hidden {
+  display: none;
+}
+
+.meeting-custom-duration label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4e5d6c;
+  margin-bottom: 0.3rem;
+}
+
+.meeting-total-card {
+  margin: 0;
+  text-align: left;
+  font-size: 1.35rem;
+}
+
+.meeting-total-card span {
+  font-weight: 700;
+}
+
+.attendee-grid {
+  display: grid;
+  /* Columns: Role, Salary, Hourly Cost, Remove Button */
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr) 2.2rem;
   gap: 0.5rem;
   margin-bottom: 0.5rem;
-  align-items: center; /* vertically center everything including button */
+  align-items: center;
 }
 
-.row.header {
-  font-weight: bold;
+.attendee-grid--header {
+  font-weight: 700;
 }
 
-input, select {
+input,
+select {
   padding: 0.4rem;
   width: 100%;
   box-sizing: border-box;
@@ -49,38 +122,70 @@ button {
   cursor: pointer;
 }
 
-.add-btn {
+.primary-button {
   background: #3498db;
-  color: white;
+  color: #ffffff;
   border: none;
   border-radius: 4px;
   margin-top: 0.5rem;
 }
 
-.remove-btn {
+.preset-role-groups {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(160px, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+}
+
+.preset-role-group h3 {
+  margin: 0 0 0.4rem;
+  font-size: 0.95rem;
+}
+
+.preset-role-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.preset-role-button {
+  background: #ecf3fb;
+  border: 1px solid #b9d3f2;
+  border-radius: 8px;
+  color: #1f4f85;
+  font-weight: 600;
+  text-align: left;
+}
+
+.preset-role-button:hover {
+  background: #dcecff;
+}
+
+.attendee-remove-button {
   background: #e74c3c;
-  color: white;
+  color: #ffffff;
   border: none;
   border-radius: 4px;
-  height: 2.2rem; /* roughly match input height */
+  height: 2.2rem;
   width: 2.2rem;
   padding: 0;
-  font-weight: bold;
+  font-weight: 700;
   text-align: center;
   line-height: 2.2rem;
 }
 
-.summary {
-  margin: 0;
-  padding: 0;
-  text-align: right;
-  font-size: 1.35rem;
+@media (max-width: 640px) {
+  .meeting-metrics {
+    grid-template-columns: 1fr;
+  }
 }
 
-.export-btn {
+.export-button {
   margin-top: 1rem;
   background: #2c3e50;
-  color: #fff;
+  color: #ffffff;
   border: none;
   border-radius: 4px;
 }

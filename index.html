@@ -7,41 +7,53 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="container">
-    <div class="title-row" id="titleRow">
-      <h1>Meeting Cost Calculator</h1>
-      <div class="summary">
-        <strong>Total Meeting Cost:</strong>
-        <span id="totalCost">$0.00</span>
+  <div class="app-shell">
+    <section id="appHeader" class="app-header">
+      <div class="app-title-row">
+        <h1>Meeting Cost Calculator</h1>
       </div>
-    </div>
 
-    <div>
-      <input id="length" type="number" value="60" min="1" />
-    </div>
+      <div class="meeting-metrics">
+        <div class="meeting-metric-card">
+          <strong>Meeting length</strong>
+          <div id="meetingDurationOptions" class="meeting-duration-options">
+            <button class="meeting-duration-button" type="button" data-minutes="30">30 mins</button>
+            <button class="meeting-duration-button is-active" type="button" data-minutes="60">60 mins</button>
+            <button class="meeting-duration-button" type="button" data-minutes="120">120 mins</button>
+            <button class="meeting-duration-button" type="button" data-minutes="custom">Custom</button>
+          </div>
+          <div id="customDurationContainer" class="meeting-custom-duration is-hidden">
+            <label for="customDurationMinutes">Custom minutes</label>
+            <input id="customDurationMinutes" type="number" value="60" min="1" />
+          </div>
+        </div>
 
-    <div class="attendees">
+        <div class="meeting-metric-card meeting-total-card">
+          <strong>Meeting cost</strong>
+          <span id="meetingTotalCost">$0.00</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="attendee-section">
       <h2>Add Role</h2>
-      <select id="rolePreset">
-        <option value="">Select role…</option>
-      </select>
-      <button class="add-btn" onclick="addFromPreset()">Add Role</button>
+      <div id="presetRoleGroups" class="preset-role-groups"></div>
+      <button id="addCustomParticipantButton" class="primary-button" type="button">Add custom participant</button>
 
-      <div id="attendeesExportSection">
+      <div id="attendeeExportSection">
         <h2>Attendees</h2>
-        <div class="row header">
-          <strong>Role</strong>
-          <strong># People</strong>
-          <strong>Annual Salary ($)</strong>
+        <div class="attendee-grid attendee-grid--header">
+          <strong>Participant(s)</strong>
+          <strong>Annual salary ($)</strong>
+          <strong>Hourly cost ($)</strong>
           <span></span>
         </div>
 
-        <div id="attendeeList"></div>
+        <div id="attendeeRows"></div>
       </div>
-      <button class="add-btn" onclick="addRow()">Add Custom Role</button>
-    </div>
+    </section>
 
-    <button id="exportJpgBtn" class="export-btn" type="button">Export as JPG</button>
+    <button id="exportJpegButton" class="export-button" type="button">Export as JPG</button>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>

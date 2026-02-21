@@ -1,171 +1,201 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const attendeeList = document.getElementById('attendeeList');
-  const exportJpgBtn = document.getElementById('exportJpgBtn');
-  const HOURS_PER_YEAR = 2080;
+  const attendeeRowsContainer = document.getElementById('attendeeRows');
+  const presetRoleGroupsContainer = document.getElementById('presetRoleGroups');
+  const addCustomParticipantButton = document.getElementById('addCustomParticipantButton');
+  const exportJpegButton = document.getElementById('exportJpegButton');
+  const meetingDurationOptions = document.getElementById('meetingDurationOptions');
+  const customDurationContainer = document.getElementById('customDurationContainer');
+  const customDurationMinutesInput = document.getElementById('customDurationMinutes');
+  const meetingTotalCost = document.getElementById('meetingTotalCost');
 
-  const ROLE_PRESETS = {
-    "Engineering": {
-      "Architect":150000,
-      "Engineer": 130000,
-      "Designer": 100000
+  const HOURS_PER_WORK_YEAR = 2080;
+  let selectedMeetingMinutes = 60;
+
+  const ROLE_SALARY_PRESETS = {
+    Engineering: {
+      Architect: 150000,
+      Engineer: 130000
     },
-    "Data": {
-      "Data Architect": 135000
+    Data: {
+      'Data architect': 135000
     },
-    "Product": {
-      "Product Owner": 110000
+    Product: {
+      'Product owner': 110000,
+      'Team coach': 100000,
+      Designer: 100000
     },
-    "Leadership": {
-      "SVP": 200000,
-      "CIO": 260000
+    Leadership: {
+      SVP: 200000,
+      CIO: 260000
     }
   };
 
-  const roleSelect = document.getElementById('rolePreset');
-
-  // Populate role dropdown from ROLE_PRESETS
-  for (const category in ROLE_PRESETS) {
-    const optgroup = document.createElement('optgroup');
-    optgroup.label = category;
-    for (const role in ROLE_PRESETS[category]) {
-      const option = document.createElement('option');
-      option.value = role;
-      option.textContent = role;
-      optgroup.appendChild(option);
-    }
-    roleSelect.appendChild(optgroup);
+  function formatCurrency(amount) {
+    return `$${amount.toFixed(2)}`;
   }
 
-  function addRow(role = '', count = 1, salary = '') {
-    const row = document.createElement('div');
-    row.className = 'row';
-    row.innerHTML = `
-      <input type="text" value="${role}" />
-      <input type="number" min="1" value="${count}" />
-      <input type="number" value="${salary}" />
-      <button class="remove-btn">X</button>
+  function renderPresetRoleGroups() {
+    for (const [categoryName, roles] of Object.entries(ROLE_SALARY_PRESETS)) {
+      const groupElement = document.createElement('div');
+      groupElement.className = 'preset-role-group';
+
+      const categoryHeading = document.createElement('h3');
+      categoryHeading.textContent = categoryName;
+      groupElement.appendChild(categoryHeading);
+
+      const roleListElement = document.createElement('div');
+      roleListElement.className = 'preset-role-list';
+
+      for (const [roleName, annualSalary] of Object.entries(roles)) {
+        const roleButton = document.createElement('button');
+        roleButton.type = 'button';
+        roleButton.className = 'preset-role-button';
+        roleButton.textContent = roleName;
+        roleButton.addEventListener('click', () => addAttendeeRow(roleName, annualSalary));
+        roleListElement.appendChild(roleButton);
+      }
+
+      groupElement.appendChild(roleListElement);
+      presetRoleGroupsContainer.appendChild(groupElement);
+    }
+  }
+
+  function addAttendeeRow(participantRole = '', annualSalary = '') {
+    const attendeeRow = document.createElement('div');
+    attendeeRow.className = 'attendee-grid';
+    attendeeRow.innerHTML = `
+      <input class="attendee-role-input" type="text" value="${participantRole}" />
+      <input class="attendee-salary-input" type="number" value="${annualSalary}" />
+      <input class="attendee-hourly-cost-input" type="text" value="$0.00" readonly />
+      <button class="attendee-remove-button" type="button">X</button>
     `;
-    row.querySelector('.remove-btn').onclick = () => {
-      row.remove();
-      calculate();
-    };
-    row.querySelectorAll('input').forEach(input => {
-      input.addEventListener('input', calculate);
+
+    attendeeRow.querySelector('.attendee-remove-button').addEventListener('click', () => {
+      attendeeRow.remove();
+      updateMeetingCost();
     });
-    attendeeList.appendChild(row);
-    calculate();
-  }
 
-  function addFromPreset() {
-    const role = roleSelect.value;
-    if (!role) return;
-    let salary = null;
-    for (const category in ROLE_PRESETS) {
-      if (ROLE_PRESETS[category][role] !== undefined) {
-        salary = ROLE_PRESETS[category][role];
-        break;
-      }
-    }
-    if (salary !== null) {
-      addRow(role, 1, salary);
-      roleSelect.value = '';
-    }
-  }
-
-  function calculate() {
-    const lengthMinutes = Number(document.getElementById('length').value);
-    const lengthHours = lengthMinutes / 60;
-    let total = 0;
-    attendeeList.querySelectorAll('.row').forEach(row => {
-      const inputs = row.querySelectorAll('input');
-      const count = Number(inputs[1].value);
-      const salary = Number(inputs[2].value);
-      if (count > 0 && salary > 0) {
-        const hourlyRate = salary / HOURS_PER_YEAR;
-        total += hourlyRate * lengthHours * count;
-      }
+    attendeeRow.querySelectorAll('input:not([readonly])').forEach(inputElement => {
+      inputElement.addEventListener('input', updateMeetingCost);
     });
-    document.getElementById('totalCost').textContent = `$${total.toFixed(2)}`;
+
+    attendeeRowsContainer.appendChild(attendeeRow);
+    updateMeetingCost();
   }
 
-  async function exportAsJpg() {
+  function getSelectedMeetingMinutes() {
+    if (!customDurationContainer.classList.contains('is-hidden')) {
+      const customMinutes = Number(customDurationMinutesInput.value);
+      return customMinutes > 0 ? customMinutes : 0;
+    }
+
+    return selectedMeetingMinutes;
+  }
+
+  function selectMeetingDuration(durationValue) {
+    meetingDurationOptions.querySelectorAll('.meeting-duration-button').forEach(button => {
+      const isActive = button.dataset.minutes === String(durationValue);
+      button.classList.toggle('is-active', isActive);
+    });
+
+    if (durationValue === 'custom') {
+      customDurationContainer.classList.remove('is-hidden');
+      customDurationMinutesInput.focus();
+    } else {
+      selectedMeetingMinutes = Number(durationValue);
+      customDurationContainer.classList.add('is-hidden');
+    }
+
+    updateMeetingCost();
+  }
+
+  function updateMeetingCost() {
+    const meetingLengthMinutes = getSelectedMeetingMinutes();
+    const meetingLengthHours = meetingLengthMinutes / 60;
+    let totalMeetingCost = 0;
+
+    attendeeRowsContainer.querySelectorAll('.attendee-grid').forEach(attendeeRow => {
+      const salaryInput = attendeeRow.querySelector('.attendee-salary-input');
+      const hourlyCostInput = attendeeRow.querySelector('.attendee-hourly-cost-input');
+      const annualSalary = Number(salaryInput.value);
+      const hourlyCost = annualSalary > 0 ? annualSalary / HOURS_PER_WORK_YEAR : 0;
+
+      hourlyCostInput.value = formatCurrency(hourlyCost);
+      totalMeetingCost += hourlyCost * meetingLengthHours;
+    });
+
+    meetingTotalCost.textContent = formatCurrency(totalMeetingCost);
+  }
+
+  async function exportAsJpeg() {
     if (typeof html2canvas !== 'function') {
       alert('Unable to export image right now. Please refresh and try again.');
       return;
     }
 
-    exportJpgBtn.disabled = true;
-    const originalText = exportJpgBtn.textContent;
-    exportJpgBtn.textContent = 'Exporting...';
+    exportJpegButton.disabled = true;
+    const originalButtonLabel = exportJpegButton.textContent;
+    exportJpegButton.textContent = 'Exporting...';
 
-    let exportRoot = null;
+    let exportCaptureRoot = null;
     try {
-      const titleRow = document.getElementById('titleRow');
-      const attendeesExportSection = document.getElementById('attendeesExportSection');
-      const container = document.querySelector('.container');
+      const appHeader = document.getElementById('appHeader');
+      const attendeeExportSection = document.getElementById('attendeeExportSection');
+      const appShell = document.querySelector('.app-shell');
 
-      exportRoot = document.createElement('div');
-      exportRoot.className = 'export-capture';
-      exportRoot.style.position = 'fixed';
-      exportRoot.style.left = '-99999px';
-      exportRoot.style.top = '0';
-      exportRoot.style.backgroundColor = '#ffffff';
-      exportRoot.style.padding = '2rem';
-      exportRoot.style.width = `${container.clientWidth}px`;
+      exportCaptureRoot = document.createElement('div');
+      exportCaptureRoot.className = 'export-capture';
+      exportCaptureRoot.style.position = 'fixed';
+      exportCaptureRoot.style.left = '-99999px';
+      exportCaptureRoot.style.top = '0';
+      exportCaptureRoot.style.backgroundColor = '#ffffff';
+      exportCaptureRoot.style.padding = '2rem';
+      exportCaptureRoot.style.width = `${appShell.clientWidth}px`;
 
-      const titleClone = titleRow.cloneNode(true);
-      const attendeesClone = attendeesExportSection.cloneNode(true);
-      exportRoot.appendChild(titleClone);
-      exportRoot.appendChild(attendeesClone);
-      document.body.appendChild(exportRoot);
+      const headerClone = appHeader.cloneNode(true);
+      const attendeesClone = attendeeExportSection.cloneNode(true);
+      exportCaptureRoot.appendChild(headerClone);
+      exportCaptureRoot.appendChild(attendeesClone);
+      document.body.appendChild(exportCaptureRoot);
 
-      const canvas = await html2canvas(exportRoot, {
+      const captureCanvas = await html2canvas(exportCaptureRoot, {
         backgroundColor: '#ffffff',
         scale: Math.min(window.devicePixelRatio || 1, 2),
         useCORS: true
       });
 
-      const imageData = canvas.toDataURL('image/jpeg', 0.92);
+      const jpegDataUrl = captureCanvas.toDataURL('image/jpeg', 0.92);
       const downloadLink = document.createElement('a');
-      downloadLink.href = imageData;
+      downloadLink.href = jpegDataUrl;
       downloadLink.download = `meeting-calculator-${new Date().toISOString().slice(0, 10)}.jpg`;
       downloadLink.click();
     } catch (error) {
       console.error('Export failed:', error);
       alert('Export failed. Please try again.');
     } finally {
-      if (exportRoot) {
-        exportRoot.remove();
+      if (exportCaptureRoot) {
+        exportCaptureRoot.remove();
       }
-      exportJpgBtn.disabled = false;
-      exportJpgBtn.textContent = originalText;
+
+      exportJpegButton.disabled = false;
+      exportJpegButton.textContent = originalButtonLabel;
     }
   }
 
-  // Move meeting length input next to header
-  const titleRow = document.getElementById('titleRow');
-  const lengthContainer = document.createElement('div');
-  lengthContainer.style.display = 'flex';
-  lengthContainer.style.alignItems = 'center';
-  lengthContainer.style.gap = '0.5rem';
+  renderPresetRoleGroups();
 
-  const lengthLabel = document.createElement('label');
-  lengthLabel.textContent = 'Meeting Length (minutes):';
-  lengthLabel.setAttribute('for', 'length');
+  meetingDurationOptions.addEventListener('click', event => {
+    const button = event.target.closest('.meeting-duration-button');
+    if (!button) return;
+    selectMeetingDuration(button.dataset.minutes);
+  });
 
-  const lengthInput = document.getElementById('length');
-  lengthInput.style.width = '80px';
+  customDurationMinutesInput.addEventListener('input', () => {
+    if (!customDurationContainer.classList.contains('is-hidden')) {
+      updateMeetingCost();
+    }
+  });
 
-  // Append label and input in same row
-  lengthContainer.appendChild(lengthLabel);
-  lengthContainer.appendChild(lengthInput);
-
-  // Insert below title row
-  titleRow.insertAdjacentElement('afterend', lengthContainer);
-
-  document.getElementById('length').addEventListener('input', calculate);
-  exportJpgBtn.addEventListener('click', exportAsJpg);
-
-  window.addFromPreset = addFromPreset;
-  window.addRow = addRow;
+  addCustomParticipantButton.addEventListener('click', () => addAttendeeRow());
+  exportJpegButton.addEventListener('click', exportAsJpeg);
 });
