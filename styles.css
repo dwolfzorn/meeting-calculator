@@ -126,20 +126,29 @@ body {
   /* Columns: Role, Salary, Hourly Cost, Remove Button */
   grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr) 2.2rem;
   gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0;
   align-items: center;
+  padding: 0.2rem 0;
 }
 
 /* Sleek row styling */
 .row {
-  padding: 0rem 0rem;
+  /* keep small vertical padding above */
   background: transparent;
   border-bottom: 1px solid #eef3f5;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0;
 }
 .row:last-child {
   border-bottom: none;
   margin-bottom: 0;
+}
+
+/* Alternate attendee row backgrounds for clarity */
+#attendeeRows .row:nth-child(odd) {
+  background: #ffffff;
+}
+#attendeeRows .row:nth-child(even) {
+  background: #f7f9fb;
 }
 
 /* When salaries are hidden, remove the salary column and hide salary inputs/header */
@@ -359,6 +368,7 @@ h2 {
   font-size: 0.9rem;
   text-align: center;
   line-height: 1.6rem;
+  align-self: center; /* ensure vertical centering inside the grid row */
 }
 
 .no-attendees {
