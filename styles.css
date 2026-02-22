@@ -194,6 +194,17 @@ select {
   -moz-appearance: textfield;
   appearance: textfield;
 }
+
+/* Remove native spinner controls for the custom minutes input */
+#customMinutes::-webkit-outer-spin-button,
+#customMinutes::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+#customMinutes {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
 .input-hourly[readonly] {
   color: #2c3e50;
   font-weight: 700;
