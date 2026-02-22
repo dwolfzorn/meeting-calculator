@@ -42,6 +42,19 @@ document.addEventListener('DOMContentLoaded', () => {
     return `${Math.round(n / 1000)}k`;
   }
 
+  function formatSalaryDisplay(amount) {
+    const n = Number(amount) || 0;
+    return `$${n.toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+  }
+
+  function parseSalaryInputValue(value) {
+    if (value == null) return 0;
+    // Remove anything that isn't digit or dot or minus
+    const cleaned = String(value).replace(/[^0-9.-]+/g, '');
+    const n = Number(cleaned);
+    return Number.isFinite(n) ? n : 0;
+  }
+
   function renderPresetRoleGroups() {
     for (const [categoryName, roles] of Object.entries(ROLE_SALARY_PRESETS)) {
       const groupElement = document.createElement('div');
@@ -78,9 +91,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function addAttendeeRow(participantRole = '', annualSalary = '') {
     const attendeeRow = document.createElement('div');
     attendeeRow.className = 'attendee-grid';
+    const salaryInitial = salariesEditable ? (annualSalary || '') : formatSalaryDisplay(annualSalary);
     attendeeRow.innerHTML = `
       <input class="attendee-role-input" type="text" value="${participantRole}" />
-      <input class="attendee-salary-input" type="number" value="${annualSalary}" ${salariesEditable ? '' : 'readonly'} />
+      <input class="attendee-salary-input" type="text" value="${salaryInitial}" ${salariesEditable ? '' : 'readonly'} />
       <input class="attendee-hourly-cost-input" type="text" value="$0.00" readonly />
       <button class="attendee-remove-button" type="button">X</button>
     `;
@@ -90,10 +104,24 @@ document.addEventListener('DOMContentLoaded', () => {
       updateMeetingCost();
     });
 
-    // Add input listeners to inputs (readonly inputs won't emit input events until enabled)
+    // Add input listeners
     attendeeRow.querySelectorAll('input').forEach(inputElement => {
       inputElement.addEventListener('input', updateMeetingCost);
     });
+
+    // Salary input: format on blur, unformat on focus for easier editing
+    const salaryInput = attendeeRow.querySelector('.attendee-salary-input');
+    if (salaryInput) {
+      salaryInput.addEventListener('focus', (e) => {
+        const v = parseSalaryInputValue(salaryInput.value);
+        salaryInput.value = v ? String(v) : '';
+      });
+      salaryInput.addEventListener('blur', (e) => {
+        const n = parseSalaryInputValue(salaryInput.value);
+        salaryInput.value = formatSalaryDisplay(n);
+        updateMeetingCost();
+      });
+    }
 
     attendeeRowsContainer.appendChild(attendeeRow);
     updateMeetingCost();
@@ -151,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
     attendeeRowsContainer.querySelectorAll('.attendee-grid').forEach(attendeeRow => {
       const salaryInput = attendeeRow.querySelector('.attendee-salary-input');
       const hourlyCostInput = attendeeRow.querySelector('.attendee-hourly-cost-input');
-      const annualSalary = Number(salaryInput.value);
+      const annualSalary = salaryInput ? parseSalaryInputValue(salaryInput.value) : 0;
       const hourlyCost = annualSalary > 0 ? annualSalary / HOURS_PER_WORK_YEAR : 0;
 
       hourlyCostInput.value = formatCurrency(hourlyCost);
