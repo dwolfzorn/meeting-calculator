@@ -5,7 +5,7 @@ body {
   padding: 2rem;
 }
 
-.app-shell {
+.app {
   max-width: 900px;
   margin: auto;
   background: #ffffff;
@@ -13,54 +13,46 @@ body {
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
-
-.app-title-row {
+.title-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 1rem;
 }
-
-.app-title-row h1 {
+.title-row h1 {
   margin: 0;
 }
-
-.meeting-metrics {
+.metrics {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
   margin-bottom: 1.25rem;
 }
-
-.meeting-metric-card {
+.metric-card {
   background: #eef3f8;
   border: 1px solid #d9e1ea;
   border-radius: 8px;
   padding: 1rem;
 }
-
-.meeting-metric-card label,
-.meeting-metric-card strong {
+.metric-card label,
+.metric-card strong {
   display: block;
   font-size: 0.9rem;
   font-weight: 700;
   color: #4e5d6c;
   margin-bottom: 0.4rem;
 }
-
-#customDurationMinutes {
+#customMinutes {
   width: 8ch;
   min-width: 8ch;
 }
-
-.meeting-duration-options {
+.duration-options {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
 }
-
-.meeting-duration-button {
+.duration-button {
   background: #ffffff;
   border: 1px solid #b9c7d6;
   border-radius: 999px;
@@ -68,49 +60,42 @@ body {
   font-weight: 600;
   padding: 0.35rem 0.7rem;
 }
-
-.meeting-duration-button.is-active {
+.duration-button.is-active {
   background: #1f4f85;
   border-color: #1f4f85;
   color: #ffffff;
 }
-
-.meeting-custom-duration {
+.custom-duration {
   margin-top: 0.6rem;
 }
-
-.meeting-custom-duration.is-hidden {
+.custom-duration.is-hidden {
   display: none;
 }
-
-.meeting-custom-duration label {
+.custom-duration label {
   display: block;
   font-size: 0.85rem;
   font-weight: 600;
   color: #4e5d6c;
   margin-bottom: 0.3rem;
 }
-
-.meeting-total-card {
+.total-card {
   margin: 0;
   text-align: left;
   font-size: 1.35rem;
 }
-
-.meeting-total-card span {
+.total-card span {
   font-weight: 700;
 }
 
 /* Layout for the attendee area: vertical sidebar on the left, attendee list on the right */
-.attendee-sections {
+.sections {
   display: grid;
   grid-template-columns: 280px 1fr;
   gap: 1rem;
   align-items: start;
   margin-top: 1rem;
 }
-
-.attendee-sidebar {
+.sidebar {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
@@ -119,15 +104,13 @@ body {
   padding: 1rem;
   border-radius: 8px;
 }
-
-.attendee-main {
+.main {
   display: block;
   border: 1px solid #e6eaee;
   padding: 1rem;
   border-radius: 8px;
 }
-
-.attendee-list-header {
+.list-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -138,7 +121,7 @@ body {
   font-weight: 700;
 }
 
-.attendee-grid {
+.row {
   display: grid;
   /* Columns: Role, Salary, Hourly Cost, Remove Button */
   grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr) 2.2rem;
@@ -148,32 +131,31 @@ body {
 }
 
 /* Sleek row styling */
-.attendee-grid {
+.row {
   padding: 0rem 0rem;
   background: transparent;
   border-bottom: 1px solid #eef3f5;
   margin-bottom: 0.25rem;
 }
-
-.attendee-grid:last-child {
+.row:last-child {
   border-bottom: none;
   margin-bottom: 0;
 }
 
 /* When salaries are hidden, remove the salary column and hide salary inputs/header */
-.attendee-main:not(.salaries-visible) .attendee-grid {
+.main:not(.salaries-visible) .row {
   grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) 2.2rem;
 }
 
-.attendee-main:not(.salaries-visible) .attendee-salary-input {
+.main:not(.salaries-visible) .input-salary {
   display: none;
 }
 
-.attendee-main:not(.salaries-visible) .attendee-grid--header > strong:nth-child(2) {
+.main:not(.salaries-visible) .row--header > strong:nth-child(2) {
   display: none;
 }
 
-.attendee-grid--header {
+.row--header {
   padding: 0.5rem 0;
   font-weight: 500;
 }
@@ -186,9 +168,9 @@ select {
 }
 
 /* Make inputs look like inline text until focused */
-.attendee-role-input,
-.attendee-salary-input,
-.attendee-hourly-cost-input {
+.input-role,
+.input-salary,
+.input-hourly {
   border: none;
   background: transparent;
   padding: 0.25rem 0.35rem;
@@ -196,26 +178,23 @@ select {
   font-size: 0.95rem;
   color: #243746;
 }
-
-.attendee-role-input:focus,
-.attendee-salary-input:focus {
+.input-role:focus,
+.input-salary:focus {
   background: #f6fbff;
   box-shadow: 0 0 0 3px rgba(31,79,133,0.05);
   outline: none;
 }
 
-/* Remove native number input spinner controls for salary inputs */
-.attendee-salary-input::-webkit-outer-spin-button,
-.attendee-salary-input::-webkit-inner-spin-button {
+.input-salary::-webkit-outer-spin-button,
+.input-salary::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-.attendee-salary-input {
+.input-salary {
   -moz-appearance: textfield;
   appearance: textfield;
 }
-
-.attendee-hourly-cost-input[readonly] {
+.input-hourly[readonly] {
   color: #2c3e50;
   font-weight: 700;
   background: transparent;
@@ -234,7 +213,7 @@ button {
   margin-top: 0.5rem;
 }
 
-.preset-role-groups {
+.preset-groups {
   display: grid;
   /* Stack categories vertically (one category per row) */
   grid-auto-flow: row;
@@ -245,14 +224,18 @@ button {
   overflow-y: auto;
   overflow-x: hidden;
 }
-
-.preset-role-group h3 {
+.preset-group h3 {
   margin: 0 0 0.4rem;
   font-size: 0.95rem;
 }
 
+h2 {
+  margin: 0.25rem 0;
+  padding: 0;
+}
+
 /* Collapsible category heading */
-.preset-role-heading {
+.preset-heading {
   display: flex;
   align-items: center;
   gap: 0.6rem;
@@ -262,7 +245,7 @@ button {
   word-break: break-word;
 }
 
-.preset-role-heading::after {
+.preset-heading::after {
   content: '▾';
   position: absolute;
   right: 0.35rem;
@@ -272,15 +255,15 @@ button {
   color: #1f4f85;
 }
 
-.preset-role-group.collapsed .preset-role-heading::after {
+.preset-group.collapsed .preset-heading::after {
   transform: translateY(-50%) rotate(-90deg);
 }
 
-.preset-role-group.collapsed .preset-role-list {
+.preset-group.collapsed .preset-list {
   display: none;
 }
 
-.preset-role-list {
+.preset-list {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
@@ -293,7 +276,7 @@ button {
   margin-bottom: 0.4rem;
 }
 
-.link-button {
+.link-btn {
   background: none;
   border: none;
   color: #1f4f85;
@@ -301,13 +284,12 @@ button {
   font-size: 0.85rem;
   cursor: pointer;
 }
-
-.link-button:focus {
+.link-btn:focus {
   outline: 2px solid rgba(31,79,133,0.15);
   outline-offset: 2px;
 }
 
-.preset-role-button {
+.preset-button {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -319,15 +301,13 @@ button {
   text-align: left;
   padding: 0.45rem 0.5rem;
 }
-
-.preset-role-name {
+.preset-name {
   flex: 1 1 auto;
   text-align: left;
   padding-right: 0.5rem;
   overflow-wrap: anywhere;
 }
-
-.preset-role-salary {
+.preset-salary {
   flex: 0 0 auto;
   font-size: 0.9rem;
   color: #31485f;
@@ -335,12 +315,12 @@ button {
   white-space: nowrap;
 }
 
-.preset-role-button:hover {
+.preset-button:hover {
   background: #dcecff;
 }
 
 /* Tidy remove button to a subtle link-style */
-.attendee-remove-button {
+.btn-remove {
   background: transparent;
   border: none;
   color: #e04b3d;
@@ -351,11 +331,11 @@ button {
   border-radius: 4px;
 }
 
-.attendee-remove-button:hover {
+.btn-remove:hover {
   background: rgba(224,75,61,0.08);
 }
 
-.attendee-remove-button {
+.btn-remove {
   background: #e74c3c;
   color: #ffffff;
   border: none;
@@ -378,16 +358,16 @@ button {
 }
 
 @media (max-width: 640px) {
-  .meeting-metrics {
+  .metrics {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 780px) {
-  .attendee-sections {
+  .sections {
     grid-template-columns: 1fr;
   }
-  .preset-role-groups {
+  .preset-groups {
     grid-auto-flow: row;
     grid-auto-columns: unset;
   }

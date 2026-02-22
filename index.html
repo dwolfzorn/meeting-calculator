@@ -7,59 +7,58 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="app-shell">
+  <div class="app">
     <section id="appHeader" class="app-header">
-      <div class="app-title-row">
+      <div class="title-row">
         <h1>How much is this meeting?</h1>
         <button id="exportJpegButton" class="export-button" type="button">Export as JPG</button>
       </div>
 
-      <div class="meeting-metrics">
-        <div class="meeting-metric-card">
+      <div class="metrics">
+        <div class="metric-card">
           <strong>Meeting length</strong>
-          <div id="meetingDurationOptions" class="meeting-duration-options">
-            <button class="meeting-duration-button" type="button" data-minutes="30">30 mins</button>
-            <button class="meeting-duration-button is-active" type="button" data-minutes="60">60 mins</button>
-            <button class="meeting-duration-button" type="button" data-minutes="120">120 mins</button>
-            <button class="meeting-duration-button" type="button" data-minutes="custom">Custom</button>
+          <div id="durationOptions" class="duration-options">
+            <button class="duration-button" type="button" data-minutes="30">30 mins</button>
+            <button class="duration-button is-active" type="button" data-minutes="60">60 mins</button>
+            <button class="duration-button" type="button" data-minutes="120">120 mins</button>
+            <button class="duration-button" type="button" data-minutes="custom">Custom</button>
           </div>
-          <div id="customDurationContainer" class="meeting-custom-duration is-hidden">
-            <label for="customDurationMinutes">Custom minutes</label>
-            <input id="customDurationMinutes" type="number" value="60" min="1" />
+          <div id="customDuration" class="custom-duration is-hidden">
+            <label for="customMinutes">Custom minutes</label>
+            <input id="customMinutes" type="number" value="60" min="1" />
           </div>
         </div>
-
-        <div class="meeting-metric-card meeting-total-card">
+        <div class="metric-card total-card">
           <strong>Meeting cost</strong>
-          <span id="meetingTotalCost">$0.00</span>
+          <span id="totalCost">$0.00</span>
         </div>
       </div>
     </section>
 
-    <section class="attendee-sections">
-      <div class="attendee-sidebar">
+    <section class="sections">
+      <div class="sidebar">
         <h2>Add attendees</h2>
         <div class="collapse-controls">
-          <button id="collapseAll" class="link-button" type="button">Collapse all [-]</button>
-          <button id="expandAll" class="link-button" type="button">Expand all [+]</button>
+          <button id="collapseAllBtn" class="link-btn" type="button">Collapse all [-]</button>
+          <button id="expandAllBtn" class="link-btn" type="button">Expand all [+]</button>
         </div>
-        <div id="presetRoleGroups" class="preset-role-groups"></div>
-        <button id="addCustomParticipantButton" class="primary-button" type="button">Add custom participant</button>
+        <div id="presetGroups" class="preset-groups"></div>
+        <button id="addParticipantBtn" class="primary-button" type="button">Add custom participant</button>
       </div>
 
-      <div class="attendee-main" id="attendeeExportSection">
-        <div class="attendee-list-header">
+      <div class="main" id="attendeeSection">
+        <div class="list-header">
           <h2>Attendee list</h2>
-          <button id="editSalariesButton" class="link-button" type="button">Edit salaries</button>
+          <button id="editSalariesBtn" class="link-btn" type="button">Edit salaries</button>
         </div>
-        <div class="attendee-grid attendee-grid--header">
+        <div class="row row--header">
           <strong>Attendee</strong>
           <strong>Annual salary</strong>
           <strong>Hourly cost</strong>
           <span></span>
         </div>
 
-        <div id="noAttendeesMessage" class="no-attendees">Please add an attendee.</div>
+        <div id="noAttendeesMsg" class="no-attendees">Please add an attendee.</div>
         <div id="attendeeRows"></div>
       </div>
     </section>

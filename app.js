@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
   const attendeeRowsContainer = document.getElementById('attendeeRows');
-  const presetRoleGroupsContainer = document.getElementById('presetRoleGroups');
-  const addCustomParticipantButton = document.getElementById('addCustomParticipantButton');
+  const presetGroupsContainer = document.getElementById('presetGroups');
+  const addParticipantBtn = document.getElementById('addParticipantBtn');
   const exportJpegButton = document.getElementById('exportJpegButton');
-  const meetingDurationOptions = document.getElementById('meetingDurationOptions');
-  const customDurationContainer = document.getElementById('customDurationContainer');
-  const customDurationMinutesInput = document.getElementById('customDurationMinutes');
-  const meetingTotalCost = document.getElementById('meetingTotalCost');
+  const durationOptions = document.getElementById('durationOptions');
+  const customDurationContainer = document.getElementById('customDuration');
+  const customMinutesInput = document.getElementById('customMinutes');
+  const totalCost = document.getElementById('totalCost');
 
   const HOURS_PER_WORK_YEAR = 2080;
   let selectedMeetingMinutes = 60;
@@ -58,11 +58,11 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderPresetRoleGroups() {
     for (const [categoryName, roles] of Object.entries(ROLE_SALARY_PRESETS)) {
       const groupElement = document.createElement('div');
-      groupElement.className = 'preset-role-group';
+      groupElement.className = 'preset-group';
 
       const categoryHeading = document.createElement('h3');
       categoryHeading.textContent = categoryName;
-      categoryHeading.className = 'preset-role-heading';
+      categoryHeading.className = 'preset-heading';
       categoryHeading.setAttribute('role', 'button');
       categoryHeading.setAttribute('aria-expanded', 'true');
       categoryHeading.addEventListener('click', () => {
@@ -72,34 +72,34 @@ document.addEventListener('DOMContentLoaded', () => {
       groupElement.appendChild(categoryHeading);
 
       const roleListElement = document.createElement('div');
-      roleListElement.className = 'preset-role-list';
+      roleListElement.className = 'preset-list';
 
       for (const [roleName, annualSalary] of Object.entries(roles)) {
         const roleButton = document.createElement('button');
         roleButton.type = 'button';
-        roleButton.className = 'preset-role-button';
-        roleButton.innerHTML = `<span class="preset-role-name">${roleName}</span><span class="preset-role-salary">${formatSalaryK(annualSalary)}</span>`;
+        roleButton.className = 'preset-button';
+        roleButton.innerHTML = `<span class="preset-name">${roleName}</span><span class="preset-salary">${formatSalaryK(annualSalary)}</span>`;
         roleButton.addEventListener('click', () => addAttendeeRow(roleName, annualSalary));
         roleListElement.appendChild(roleButton);
       }
 
       groupElement.appendChild(roleListElement);
-      presetRoleGroupsContainer.appendChild(groupElement);
+      presetGroupsContainer.appendChild(groupElement);
     }
   }
 
   function addAttendeeRow(participantRole = '', annualSalary = '') {
     const attendeeRow = document.createElement('div');
-    attendeeRow.className = 'attendee-grid';
+    attendeeRow.className = 'row';
     const salaryInitial = salariesEditable ? (annualSalary || '') : formatSalaryDisplay(annualSalary);
     attendeeRow.innerHTML = `
-      <input class="attendee-role-input" type="text" value="${participantRole}" />
-      <input class="attendee-salary-input" type="text" value="${salaryInitial}" ${salariesEditable ? '' : 'readonly'} />
-      <input class="attendee-hourly-cost-input" type="text" value="$0.00" readonly />
-      <button class="attendee-remove-button" type="button">X</button>
+      <input class="input-role" type="text" value="${participantRole}" />
+      <input class="input-salary" type="text" value="${salaryInitial}" ${salariesEditable ? '' : 'readonly'} />
+      <input class="input-hourly" type="text" value="$0.00" readonly />
+      <button class="btn-remove" type="button">X</button>
     `;
 
-    attendeeRow.querySelector('.attendee-remove-button').addEventListener('click', () => {
+    attendeeRow.querySelector('.btn-remove').addEventListener('click', () => {
       attendeeRow.remove();
       updateMeetingCost();
       updateNoAttendeesMessage();
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Salary input: format on blur, unformat on focus for easier editing
-    const salaryInput = attendeeRow.querySelector('.attendee-salary-input');
+    const salaryInput = attendeeRow.querySelector('.input-salary');
     if (salaryInput) {
       salaryInput.addEventListener('focus', (e) => {
         const v = parseSalaryInputValue(salaryInput.value);
@@ -130,8 +130,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateNoAttendeesMessage() {
-    const noMsg = document.getElementById('noAttendeesMessage');
-    const rows = attendeeRowsContainer.querySelectorAll('.attendee-grid');
+    const noMsg = document.getElementById('noAttendeesMsg');
+    const rows = attendeeRowsContainer.querySelectorAll('.row');
     if (!noMsg) return;
     if (rows.length === 0) {
       noMsg.style.display = 'block';
@@ -144,23 +144,23 @@ document.addEventListener('DOMContentLoaded', () => {
   function setSalariesEditable(editable) {
     salariesEditable = !!editable;
     // Toggle readOnly state on salary inputs
-    document.querySelectorAll('.attendee-salary-input').forEach(input => {
+    document.querySelectorAll('.input-salary').forEach(input => {
       input.readOnly = !salariesEditable;
     });
 
     // Toggle visual visibility on the attendee main container
-    const attendeeMain = document.getElementById('attendeeExportSection');
+    const attendeeMain = document.getElementById('attendeeSection');
     if (attendeeMain) {
       attendeeMain.classList.toggle('salaries-visible', salariesEditable);
     }
 
-    const btn = document.getElementById('editSalariesButton');
+    const btn = document.getElementById('editSalariesBtn');
     if (btn) btn.textContent = salariesEditable ? 'Save salaries' : 'Edit salaries';
   }
 
   function getSelectedMeetingMinutes() {
     if (!customDurationContainer.classList.contains('is-hidden')) {
-      const customMinutes = Number(customDurationMinutesInput.value);
+      const customMinutes = Number(customMinutesInput.value);
       return customMinutes > 0 ? customMinutes : 0;
     }
 
@@ -168,14 +168,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function selectMeetingDuration(durationValue) {
-    meetingDurationOptions.querySelectorAll('.meeting-duration-button').forEach(button => {
+    durationOptions.querySelectorAll('.duration-button').forEach(button => {
       const isActive = button.dataset.minutes === String(durationValue);
       button.classList.toggle('is-active', isActive);
     });
 
     if (durationValue === 'custom') {
       customDurationContainer.classList.remove('is-hidden');
-      customDurationMinutesInput.focus();
+      customMinutesInput.focus();
     } else {
       selectedMeetingMinutes = Number(durationValue);
       customDurationContainer.classList.add('is-hidden');
@@ -189,9 +189,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const meetingLengthHours = meetingLengthMinutes / 60;
     let totalMeetingCost = 0;
 
-    attendeeRowsContainer.querySelectorAll('.attendee-grid').forEach(attendeeRow => {
-      const salaryInput = attendeeRow.querySelector('.attendee-salary-input');
-      const hourlyCostInput = attendeeRow.querySelector('.attendee-hourly-cost-input');
+    attendeeRowsContainer.querySelectorAll('.row').forEach(attendeeRow => {
+      const salaryInput = attendeeRow.querySelector('.input-salary');
+      const hourlyCostInput = attendeeRow.querySelector('.input-hourly');
       const annualSalary = salaryInput ? parseSalaryInputValue(salaryInput.value) : 0;
       const hourlyCost = annualSalary > 0 ? annualSalary / HOURS_PER_WORK_YEAR : 0;
 
@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
       totalMeetingCost += hourlyCost * meetingLengthHours;
     });
 
-    meetingTotalCost.textContent = formatCurrency(totalMeetingCost);
+    totalCost.textContent = formatCurrency(totalMeetingCost);
   }
 
   async function exportAsJpeg() {
@@ -215,8 +215,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let exportCaptureRoot = null;
     try {
       const appHeader = document.getElementById('appHeader');
-      const attendeeExportSection = document.getElementById('attendeeExportSection');
-      const appShell = document.querySelector('.app-shell');
+      const attendeeExportSection = document.getElementById('attendeeSection');
+      const appShell = document.querySelector('.app');
 
       exportCaptureRoot = document.createElement('div');
       exportCaptureRoot.className = 'export-capture';
@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const exportBtnInClone = headerClone.querySelector('#exportJpegButton');
       if (exportBtnInClone) exportBtnInClone.remove();
       const attendeesClone = attendeeExportSection.cloneNode(true);
-      const editBtnInClone = attendeesClone.querySelector('#editSalariesButton');
+      const editBtnInClone = attendeesClone.querySelector('#editSalariesBtn');
       if (editBtnInClone) editBtnInClone.remove();
       exportCaptureRoot.appendChild(headerClone);
       exportCaptureRoot.appendChild(attendeesClone);
@@ -264,17 +264,17 @@ document.addEventListener('DOMContentLoaded', () => {
   renderPresetRoleGroups();
   updateNoAttendeesMessage();
 
-  const editSalariesButton = document.getElementById('editSalariesButton');
+  const editSalariesButton = document.getElementById('editSalariesBtn');
   if (editSalariesButton) {
     editSalariesButton.addEventListener('click', () => setSalariesEditable(!salariesEditable));
   }
 
   // Collapse/Expand all controls
-  const collapseAllButton = document.getElementById('collapseAll');
-  const expandAllButton = document.getElementById('expandAll');
+  const collapseAllButton = document.getElementById('collapseAllBtn');
+  const expandAllButton = document.getElementById('expandAllBtn');
   function setAllGroupsCollapsed(collapsed) {
-    document.querySelectorAll('.preset-role-group').forEach(group => {
-      const heading = group.querySelector('.preset-role-heading');
+    document.querySelectorAll('.preset-group').forEach(group => {
+      const heading = group.querySelector('.preset-heading');
       if (!heading) return;
       group.classList.toggle('collapsed', collapsed);
       heading.setAttribute('aria-expanded', String(!collapsed));
@@ -288,19 +288,19 @@ document.addEventListener('DOMContentLoaded', () => {
     expandAllButton.addEventListener('click', () => setAllGroupsCollapsed(false));
   }
 
-  meetingDurationOptions.addEventListener('click', event => {
-    const button = event.target.closest('.meeting-duration-button');
+  durationOptions.addEventListener('click', event => {
+    const button = event.target.closest('.duration-button');
     if (!button) return;
     selectMeetingDuration(button.dataset.minutes);
   });
 
-  customDurationMinutesInput.addEventListener('input', () => {
+  customMinutesInput.addEventListener('input', () => {
     if (!customDurationContainer.classList.contains('is-hidden')) {
       updateMeetingCost();
     }
   });
 
   // When adding a custom participant, prefill the name
-  addCustomParticipantButton.addEventListener('click', () => addAttendeeRow('Custom participant', ''));
+  addParticipantBtn.addEventListener('click', () => addAttendeeRow('Custom participant', ''));
   exportJpegButton.addEventListener('click', exportAsJpeg);
 });
