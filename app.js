@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const HOURS_PER_WORK_YEAR = 2080;
   let selectedMeetingMinutes = 60;
+  let salariesEditable = false;
 
   const ROLE_SALARY_PRESETS = {
     Engineering: {
@@ -36,6 +37,11 @@ document.addEventListener('DOMContentLoaded', () => {
     return `$${amount.toFixed(2)}`;
   }
 
+  function formatSalaryK(amount) {
+    const n = Number(amount) || 0;
+    return `${Math.round(n / 1000)}k`;
+  }
+
   function renderPresetRoleGroups() {
     for (const [categoryName, roles] of Object.entries(ROLE_SALARY_PRESETS)) {
       const groupElement = document.createElement('div');
@@ -59,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const roleButton = document.createElement('button');
         roleButton.type = 'button';
         roleButton.className = 'preset-role-button';
-        roleButton.textContent = roleName;
+        roleButton.innerHTML = `<span class="preset-role-name">${roleName}</span><span class="preset-role-salary">${formatSalaryK(annualSalary)}</span>`;
         roleButton.addEventListener('click', () => addAttendeeRow(roleName, annualSalary));
         roleListElement.appendChild(roleButton);
       }
@@ -74,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     attendeeRow.className = 'attendee-grid';
     attendeeRow.innerHTML = `
       <input class="attendee-role-input" type="text" value="${participantRole}" />
-      <input class="attendee-salary-input" type="number" value="${annualSalary}" />
+      <input class="attendee-salary-input" type="number" value="${annualSalary}" ${salariesEditable ? '' : 'readonly'} />
       <input class="attendee-hourly-cost-input" type="text" value="$0.00" readonly />
       <button class="attendee-remove-button" type="button">X</button>
     `;
@@ -84,12 +90,31 @@ document.addEventListener('DOMContentLoaded', () => {
       updateMeetingCost();
     });
 
-    attendeeRow.querySelectorAll('input:not([readonly])').forEach(inputElement => {
+    // Add input listeners to inputs (readonly inputs won't emit input events until enabled)
+    attendeeRow.querySelectorAll('input').forEach(inputElement => {
       inputElement.addEventListener('input', updateMeetingCost);
     });
 
     attendeeRowsContainer.appendChild(attendeeRow);
     updateMeetingCost();
+  }
+
+  // Toggle showing/editing of salaries. When hidden, salary inputs stay in DOM and retain values.
+  function setSalariesEditable(editable) {
+    salariesEditable = !!editable;
+    // Toggle readOnly state on salary inputs
+    document.querySelectorAll('.attendee-salary-input').forEach(input => {
+      input.readOnly = !salariesEditable;
+    });
+
+    // Toggle visual visibility on the attendee main container
+    const attendeeMain = document.getElementById('attendeeExportSection');
+    if (attendeeMain) {
+      attendeeMain.classList.toggle('salaries-visible', salariesEditable);
+    }
+
+    const btn = document.getElementById('editSalariesButton');
+    if (btn) btn.textContent = salariesEditable ? 'Save salaries' : 'Edit salaries';
   }
 
   function getSelectedMeetingMinutes() {
@@ -165,6 +190,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const exportBtnInClone = headerClone.querySelector('#exportJpegButton');
       if (exportBtnInClone) exportBtnInClone.remove();
       const attendeesClone = attendeeExportSection.cloneNode(true);
+      const editBtnInClone = attendeesClone.querySelector('#editSalariesButton');
+      if (editBtnInClone) editBtnInClone.remove();
       exportCaptureRoot.appendChild(headerClone);
       exportCaptureRoot.appendChild(attendeesClone);
       document.body.appendChild(exportCaptureRoot);
@@ -194,6 +221,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   renderPresetRoleGroups();
+
+  const editSalariesButton = document.getElementById('editSalariesButton');
+  if (editSalariesButton) {
+    editSalariesButton.addEventListener('click', () => setSalariesEditable(!salariesEditable));
+  }
 
   // Collapse/Expand all controls
   const collapseAllButton = document.getElementById('collapseAll');
@@ -226,6 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  addCustomParticipantButton.addEventListener('click', () => addAttendeeRow());
+  // When adding a custom participant, prefill the name
+  addCustomParticipantButton.addEventListener('click', () => addAttendeeRow('Custom participant', ''));
   exportJpegButton.addEventListener('click', exportAsJpeg);
 });

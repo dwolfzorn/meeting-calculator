@@ -104,7 +104,7 @@ body {
 /* Layout for the attendee area: vertical sidebar on the left, attendee list on the right */
 .attendee-sections {
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: 280px 1fr;
   gap: 1rem;
   align-items: start;
   margin-top: 1rem;
@@ -127,6 +127,17 @@ body {
   border-radius: 8px;
 }
 
+.attendee-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.edit-salaries-active {
+  font-weight: 700;
+}
+
 .attendee-grid {
   display: grid;
   /* Columns: Role, Salary, Hourly Cost, Remove Button */
@@ -136,7 +147,34 @@ body {
   align-items: center;
 }
 
+/* Sleek row styling */
+.attendee-grid {
+  padding: 0rem 0rem;
+  background: transparent;
+  border-bottom: 1px solid #eef3f5;
+  margin-bottom: 0.25rem;
+}
+
+.attendee-grid:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+/* When salaries are hidden, remove the salary column and hide salary inputs/header */
+.attendee-main:not(.salaries-visible) .attendee-grid {
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) 2.2rem;
+}
+
+.attendee-main:not(.salaries-visible) .attendee-salary-input {
+  display: none;
+}
+
+.attendee-main:not(.salaries-visible) .attendee-grid--header > strong:nth-child(2) {
+  display: none;
+}
+
 .attendee-grid--header {
+  padding: 0.5rem 0;
   font-weight: 500;
 }
 
@@ -145,6 +183,42 @@ select {
   padding: 0.4rem;
   width: 100%;
   box-sizing: border-box;
+}
+
+/* Make inputs look like inline text until focused */
+.attendee-role-input,
+.attendee-salary-input,
+.attendee-hourly-cost-input {
+  border: none;
+  background: transparent;
+  padding: 0.25rem 0.35rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #243746;
+}
+
+.attendee-role-input:focus,
+.attendee-salary-input:focus {
+  background: #f6fbff;
+  box-shadow: 0 0 0 3px rgba(31,79,133,0.05);
+  outline: none;
+}
+
+/* Remove native number input spinner controls for salary inputs */
+.attendee-salary-input::-webkit-outer-spin-button,
+.attendee-salary-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.attendee-salary-input {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.attendee-hourly-cost-input[readonly] {
+  color: #2c3e50;
+  font-weight: 700;
+  background: transparent;
 }
 
 button {
@@ -234,16 +308,51 @@ button {
 }
 
 .preset-role-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   background: #ecf3fb;
   border: 1px solid #b9d3f2;
   border-radius: 8px;
   color: #1f4f85;
-  font-weight: 600;
+  font-weight: 700;
   text-align: left;
+  padding: 0.45rem 0.5rem;
+}
+
+.preset-role-name {
+  flex: 1 1 auto;
+  text-align: left;
+  padding-right: 0.5rem;
+  overflow-wrap: anywhere;
+}
+
+.preset-role-salary {
+  flex: 0 0 auto;
+  font-size: 0.9rem;
+  color: #31485f;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .preset-role-button:hover {
   background: #dcecff;
+}
+
+/* Tidy remove button to a subtle link-style */
+.attendee-remove-button {
+  background: transparent;
+  border: none;
+  color: #e04b3d;
+  font-weight: 700;
+  width: auto;
+  height: auto;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+}
+
+.attendee-remove-button:hover {
+  background: rgba(224,75,61,0.08);
 }
 
 .attendee-remove-button {
