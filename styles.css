@@ -360,12 +360,21 @@ button {
   color: #ffffff;
   border: none;
   border-radius: 4px;
-  height: 2.2rem;
-  width: 2.2rem;
+  /* reduced by ~30% */
+  height: 1.6rem;
+  width: 1.6rem;
   padding: 0;
   font-weight: 700;
+  font-size: 0.9rem;
   text-align: center;
-  line-height: 2.2rem;
+  line-height: 1.6rem;
+}
+
+.no-attendees {
+  color: #6b7280;
+  font-size: 0.95rem;
+  padding: 1rem 0.75rem;
+  text-align: left;
 }
 
 @media (max-width: 640px) {

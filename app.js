@@ -102,6 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
     attendeeRow.querySelector('.attendee-remove-button').addEventListener('click', () => {
       attendeeRow.remove();
       updateMeetingCost();
+      updateNoAttendeesMessage();
     });
 
     // Add input listeners
@@ -125,6 +126,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     attendeeRowsContainer.appendChild(attendeeRow);
     updateMeetingCost();
+    updateNoAttendeesMessage();
+  }
+
+  function updateNoAttendeesMessage() {
+    const noMsg = document.getElementById('noAttendeesMessage');
+    const rows = attendeeRowsContainer.querySelectorAll('.attendee-grid');
+    if (!noMsg) return;
+    if (rows.length === 0) {
+      noMsg.style.display = 'block';
+    } else {
+      noMsg.style.display = 'none';
+    }
   }
 
   // Toggle showing/editing of salaries. When hidden, salary inputs stay in DOM and retain values.
@@ -249,6 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   renderPresetRoleGroups();
+  updateNoAttendeesMessage();
 
   const editSalariesButton = document.getElementById('editSalariesButton');
   if (editSalariesButton) {
