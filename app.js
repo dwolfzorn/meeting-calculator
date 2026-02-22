@@ -195,6 +195,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   renderPresetRoleGroups();
 
+  // Collapse/Expand all controls
+  const collapseAllButton = document.getElementById('collapseAll');
+  const expandAllButton = document.getElementById('expandAll');
+  function setAllGroupsCollapsed(collapsed) {
+    document.querySelectorAll('.preset-role-group').forEach(group => {
+      const heading = group.querySelector('.preset-role-heading');
+      if (!heading) return;
+      group.classList.toggle('collapsed', collapsed);
+      heading.setAttribute('aria-expanded', String(!collapsed));
+    });
+  }
+
+  if (collapseAllButton) {
+    collapseAllButton.addEventListener('click', () => setAllGroupsCollapsed(true));
+  }
+  if (expandAllButton) {
+    expandAllButton.addEventListener('click', () => setAllGroupsCollapsed(false));
+  }
+
   meetingDurationOptions.addEventListener('click', event => {
     const button = event.target.closest('.meeting-duration-button');
     if (!button) return;
