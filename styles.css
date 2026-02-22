@@ -15,6 +15,10 @@ body {
 }
 
 .app-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
   margin-bottom: 1rem;
 }
 
@@ -97,6 +101,32 @@ body {
   font-weight: 700;
 }
 
+/* Layout for the attendee area: vertical sidebar on the left, attendee list on the right */
+.attendee-sections {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 1rem;
+  align-items: start;
+  margin-top: 1rem;
+}
+
+.attendee-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  overflow-x: hidden;
+  border: 1px solid #e6eaee;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.attendee-main {
+  display: block;
+  border: 1px solid #e6eaee;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
 .attendee-grid {
   display: grid;
   /* Columns: Role, Salary, Hourly Cost, Remove Button */
@@ -107,7 +137,7 @@ body {
 }
 
 .attendee-grid--header {
-  font-weight: 700;
+  font-weight: 500;
 }
 
 input,
@@ -118,7 +148,7 @@ select {
 }
 
 button {
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.75rem;
   cursor: pointer;
 }
 
@@ -132,16 +162,48 @@ button {
 
 .preset-role-groups {
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(160px, 1fr);
-  gap: 1rem;
+  /* Stack categories vertically (one category per row) */
+  grid-auto-flow: row;
+  grid-template-columns: 1fr;
+  gap: 0.6rem;
   margin-bottom: 1rem;
-  overflow-x: auto;
+  max-height: 60vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .preset-role-group h3 {
   margin: 0 0 0.4rem;
   font-size: 0.95rem;
+}
+
+/* Collapsible category heading */
+.preset-role-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  padding: 0.25rem 0.6rem 0.25rem 0.15rem;
+  position: relative;
+  word-break: break-word;
+}
+
+.preset-role-heading::after {
+  content: '▾';
+  position: absolute;
+  right: 0.35rem;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: transform 0.15s ease;
+  color: #1f4f85;
+}
+
+.preset-role-group.collapsed .preset-role-heading::after {
+  transform: translateY(-50%) rotate(-90deg);
+}
+
+.preset-role-group.collapsed .preset-role-list {
+  display: none;
 }
 
 .preset-role-list {
@@ -182,10 +244,33 @@ button {
   }
 }
 
+@media (max-width: 780px) {
+  .attendee-sections {
+    grid-template-columns: 1fr;
+  }
+  .preset-role-groups {
+    grid-auto-flow: row;
+    grid-auto-columns: unset;
+  }
+}
+
 .export-button {
-  margin-top: 1rem;
+  margin-top: 0;
   background: #2c3e50;
   color: #ffffff;
   border: none;
   border-radius: 4px;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 640px) {
+  .app-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .export-button {
+    align-self: flex-end;
+  }
 }

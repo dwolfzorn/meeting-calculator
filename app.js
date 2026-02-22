@@ -16,9 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
       Architect: 150000,
       Engineer: 130000
     },
+/*
     Data: {
       'Data architect': 135000
-    },
+    },'
+*/
     Product: {
       'Product owner': 110000,
       'Team coach': 100000,
@@ -41,6 +43,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const categoryHeading = document.createElement('h3');
       categoryHeading.textContent = categoryName;
+      categoryHeading.className = 'preset-role-heading';
+      categoryHeading.setAttribute('role', 'button');
+      categoryHeading.setAttribute('aria-expanded', 'true');
+      categoryHeading.addEventListener('click', () => {
+        const isCollapsed = groupElement.classList.toggle('collapsed');
+        categoryHeading.setAttribute('aria-expanded', String(!isCollapsed));
+      });
       groupElement.appendChild(categoryHeading);
 
       const roleListElement = document.createElement('div');
@@ -153,6 +162,8 @@ document.addEventListener('DOMContentLoaded', () => {
       exportCaptureRoot.style.width = `${appShell.clientWidth}px`;
 
       const headerClone = appHeader.cloneNode(true);
+      const exportBtnInClone = headerClone.querySelector('#exportJpegButton');
+      if (exportBtnInClone) exportBtnInClone.remove();
       const attendeesClone = attendeeExportSection.cloneNode(true);
       exportCaptureRoot.appendChild(headerClone);
       exportCaptureRoot.appendChild(attendeesClone);

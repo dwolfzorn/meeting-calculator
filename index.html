@@ -10,7 +10,8 @@
   <div class="app-shell">
     <section id="appHeader" class="app-header">
       <div class="app-title-row">
-        <h1>Meeting Cost Calculator</h1>
+        <h1>How much is this meeting?</h1>
+        <button id="exportJpegButton" class="export-button" type="button">Export as JPG</button>
       </div>
 
       <div class="meeting-metrics">
@@ -35,15 +36,17 @@
       </div>
     </section>
 
-    <section class="attendee-section">
-      <h2>Add meeting attendees</h2>
-      <div id="presetRoleGroups" class="preset-role-groups"></div>
-      <button id="addCustomParticipantButton" class="primary-button" type="button">Add custom participant</button>
+    <section class="attendee-sections">
+      <div class="attendee-sidebar">
+        <h2>Add attendees</h2>
+        <div id="presetRoleGroups" class="preset-role-groups"></div>
+        <button id="addCustomParticipantButton" class="primary-button" type="button">Add custom participant</button>
+      </div>
 
-      <div id="attendeeExportSection">
-        <h2>Participants</h2>
+      <div class="attendee-main" id="attendeeExportSection">
+        <h2>Attendee list</h2>
         <div class="attendee-grid attendee-grid--header">
-          <strong>Attendee(s)</strong>
+          <strong>Attendee</strong>
           <strong>Annual salary ($)</strong>
           <strong>Hourly cost ($)</strong>
           <span></span>
@@ -53,7 +56,6 @@
       </div>
     </section>
 
-    <button id="exportJpegButton" class="export-button" type="button">Export as JPG</button>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
